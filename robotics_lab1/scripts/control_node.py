@@ -11,6 +11,9 @@ from robotics_lab1.msg import Turtlecontrol
 # for radians to degrees conversions
 import math
 
+pos_msg = Pose()
+control_msg = Turtlecontrol()
+
 def pose_callback(data):
 	global pos_msg
 	pos_msg.x = data.x 
@@ -35,7 +38,7 @@ if __name__ == '__main__':
 
 	while not rospy.is_shutdown():
 		vel_cmd.linear.x = (control_msg.kp * (control_msg.xd - pos_msg.x))
-		cmd_pub.publisher(vel_cmd)
+		cmd_pub.publish(vel_cmd)
 		# wait for 0.1 seconds until the next loop and repeat
 		loop_rate.sleep()
 	
