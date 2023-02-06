@@ -37,8 +37,6 @@ if __name__ == '__main__':
 	# declarng a twist variable
 	vel_cmd = Twist()
 	# Setting desired location
-	control_msg.kp = 1
-	control_msg.xd = 8
 
 	while not rospy.is_shutdown():
 		# Performing formula to move towards desired location
