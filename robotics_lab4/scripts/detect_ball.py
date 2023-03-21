@@ -30,11 +30,11 @@ def get_image(ros_img):
 	
 if __name__ == '__main__':
 	# define the node and subcribers and publishers
-	rospy.init_node('ball_2d', anonymous = True)
+	rospy.init_node('ball_2D', anonymous = True)
 	# define a subscriber to read images
 	img_sub = rospy.Subscriber("/camera/color/image_raw", Image, get_image) 
 	# define a publisher to publish images
-	img_pub = rospy.Publisher('/ball_2d', Image, queue_size = 1)
+	img_pub = rospy.Publisher('/ball_2D', Image, queue_size = 1)
 	
 	# set the loop frequency
 	rate = rospy.Rate(10)
