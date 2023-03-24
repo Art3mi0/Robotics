@@ -15,7 +15,11 @@ def array_callback(data):
 	global A
 	global B
 	A = []
-	A.append(data.points)
+	for i in data.points:
+		A.append([i.x, i.y, i.z])
+	A = np.array(A)
+	#A = np.dot(2, A)
+	A = np.square(A)
 
 def param_callback(data):
 	global sphere_params_msg
