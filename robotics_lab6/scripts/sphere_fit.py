@@ -40,17 +40,19 @@ def param_callback(data):
 	sphere_params_msg.zc = data.zc
 	sphere_params_msg.radius = data.radius
 
+# Method for applying filter to xyz coordiantes
 def coordinate_filter(coordinate, out):
 	fil_in = coordinate
 	fil_out = out
-	fil_gain = 0.7
+	fil_gain = 0.03
 	fil_out = fil_gain*fil_in + (1 - fil_gain)*fil_out
 	return fil_out
-	
+
+# Method for applying filter to radius	
 def radius_filter(radius, out):
 	fil_in = radius
 	fil_out = out
-	fil_gain = 0.8
+	fil_gain = 0.01
 	fil_out = fil_gain*fil_in + (1 - fil_gain)*fil_out
 	return fil_out
 
@@ -63,11 +65,12 @@ if __name__ == '__main__':
 	param_pub = rospy.Publisher('/sphere_params', SphereParams, queue_size = 10)
 	loop_rate = rospy.Rate(10)
 	estimate = SphereParams()
-	global fil_out
-	xfil_out = 3
-	yfil_out = 3
-	zfil_out = 3
-	rfil_out = 3
+	# Initial guesses of first reading
+	# Values used from a reading from lab 5 script
+	xfil_out = -0.014
+	yfil_out = -0.016
+	zfil_out = 0.47
+	rfil_out = 0.045
 	
 	while not rospy.is_shutdown():
 		# Using boolean check to help prevent crash and debug
@@ -81,16 +84,17 @@ if __name__ == '__main__':
 			# Calculates radius
 			radius = (p + (x **2) + (y **2) + (z **2)) **(1/2)
 			
+			# Apply filter and store variables within loop
 			xfil_out = coordinate_filter(x, xfil_out)
-			yfil_out = coordinate_filter(x, yfil_out)
-			zfil_out = coordinate_filter(x, zfil_out)
+			yfil_out = coordinate_filter(y, yfil_out)
+			zfil_out = coordinate_filter(z, zfil_out)
 			rfil_out = radius_filter(radius, rfil_out)
-			# Assign message parameters
-			sphere_params_msg.xc = xfil_out
-			sphere_params_msg.yc = yfil_out
-			sphere_params_msg.zc = zfil_out
-			sphere_params_msg.radius = rfil_out
+			# Assign filtered message parameters
+			estimate.xc = xfil_out
+			estimate.yc = yfil_out
+			estimate.zc = zfil_out
+			estimate.radius = rfil_out
 			# Publishes to topic that will display in rviz
-			param_pub.publish(sphere_params_msg)
+			param_pub.publish(estimate)
 
 		loop_rate.sleep()
