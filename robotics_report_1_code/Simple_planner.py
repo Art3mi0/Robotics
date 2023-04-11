@@ -38,7 +38,7 @@ if __name__ == '__main__':
 	plan_point2.angular.z = -1.566
 	# add this point to the plan
 	plan.points.append(plan_point2)
-'''	
+	
 	plan_point3 = Twist()
 	# Turn the claw and move it upwards
 	plan_point3.linear.x = -0.6
@@ -60,8 +60,6 @@ if __name__ == '__main__':
 	plan_point4.angular.z = -1.566
 	# add this point to the plan
 	plan.points.append(plan_point4)
-'''
-	
 	
 	while not rospy.is_shutdown():
 		# publish the plan
