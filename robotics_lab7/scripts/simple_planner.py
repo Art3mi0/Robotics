@@ -10,6 +10,7 @@ import tf2_geometry_msgs
 # import the messages
 from ur5e_control.msg import Plan
 from geometry_msgs.msg import Twist
+from std_msgs.msg import Bool
 from robot_vision_lectures.msg import SphereParams
 
 def createPlan(rStart, pt_in_base):
@@ -86,6 +87,7 @@ def createPlan(rStart, pt_in_base):
 # Initialize messages for processing data from subscribed nodes
 ball_params = SphereParams()
 robot_params = Twist()
+ball_move = Bool()
 count = 0
 
 # Method for storing data from sphere_params
@@ -109,6 +111,10 @@ def robot_callback(data):
 	robot_params.angular.y = data.angular.y
 	robot_params.angular.z = data.angular.z
 
+def move_callback(data):
+	global ball_move
+	ball_move = data
+
 if __name__ == '__main__':
 	# initialize the node
 	rospy.init_node('simple_planner', anonymous = True)
@@ -116,6 +122,7 @@ if __name__ == '__main__':
 	plan_pub = rospy.Publisher('/plan', Plan, queue_size = 10)
 	# define a subscriber to read estimated sphere coordinates
 	param_pub = rospy.Subscriber('/sphere_params', SphereParams, ball_callback)
+	pause_pub = rospy.Subscriber('/movement_start', Bool, move_callback)
 	# define a subscriber to read robot parameters
 	param_pub = rospy.Subscriber('/ur5e/toolpose', Twist, robot_callback)
 	# add a ros transform listener
@@ -162,9 +169,10 @@ if __name__ == '__main__':
 			# Send the current robot parameters and ball coordiantes to the planner
 			plan = createPlan(robot_params, pt_in_base)
 			planComplete = True
-			print("Plan is created. Expect robot movement")
+			print("Plan is created. Expect robot movement after using rqtgui")
 		# publish the plan
-		if planComplete:
+		print(planComplete, ball_move)
+		if planComplete and ball_move.data:
 			plan_pub.publish(plan)
 		# wait for 0.1 seconds until the next loop and repeat
 		loop_rate.sleep()

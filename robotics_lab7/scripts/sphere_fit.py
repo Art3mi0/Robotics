@@ -3,9 +3,11 @@ import rospy
 import numpy as np
 from robot_vision_lectures.msg import SphereParams
 from robot_vision_lectures.msg import XYZarray
+from std_msgs.msg import Bool
 
 # Initialize message
 sphere_params_msg = SphereParams()
+pause_resume = Bool()
 check = False
 
 # Initialize array
