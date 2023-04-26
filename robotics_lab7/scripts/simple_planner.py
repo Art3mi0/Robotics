@@ -81,7 +81,13 @@ def createPlan(rStart, pt_in_base):
 	plan_point6.angular.z = rStart.angular.z
 	# add this point to the plan
 	plan.points.append(plan_point6)
-
+	print("The Plan:")
+	print(plan_point1)
+	print(plan_point2)
+	print(plan_point3)
+	print(plan_point4)
+	print(plan_point5)
+	print(plan_point6)
 	return plan
 
 # Initialize messages for processing data from subscribed nodes
@@ -171,7 +177,6 @@ if __name__ == '__main__':
 			planComplete = True
 			print("Plan is created. Expect robot movement after using rqtgui")
 		# publish the plan
-		print(planComplete, ball_move)
 		if planComplete and ball_move.data:
 			plan_pub.publish(plan)
 		# wait for 0.1 seconds until the next loop and repeat

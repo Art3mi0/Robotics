@@ -34,12 +34,14 @@ if __name__ == '__main__':
 	# set the ideal time to destination
 	pos_cmd_point.time_from_start = rospy.Duration(1.0) # here one second 
 	# just change the value of the command for the second joint
-	pos_cmd_point.positions[1] = -math.pi/4
+	pos_cmd_point.positions[1] = -1.79
 	# just change the value of the command for the elbow joint
-	pos_cmd_point.positions[0] = math.pi/4
+	pos_cmd_point.positions[0] = -1.47
+	pos_cmd_point.positions[2] = -1.28
 	# Adjusting position of grabber to face downward
-	pos_cmd_point.positions[3] = -math.pi/2
-	pos_cmd_point.positions[4] = -math.pi/2
+	pos_cmd_point.positions[3] = 1.71
+	pos_cmd_point.positions[4] = -1.58
+	pos_cmd_point.positions[5] = -1.24
 	# add the trajectory point to the command
 	pos_cmd.points.append(pos_cmd_point)
 	# define a message header	
