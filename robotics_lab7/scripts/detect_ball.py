@@ -15,7 +15,7 @@ upper_yellow = np.array([40, 255, 255])
 # defines an array similar to the image array
 img_array = np.zeros((720, 1280), dtype = "uint8")
 # Defines a rectangle used to focus on an area of the image
-rectangle = cv2.rectangle(img_array, (150, 150), (1120, 570), (255, 255, 255), -1)
+rectangle = cv2.rectangle(img_array, (200, 150), (1120, 570), (255, 255, 255), -1)
 
 
 # get the image message
