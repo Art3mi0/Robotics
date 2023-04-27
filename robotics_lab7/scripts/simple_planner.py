@@ -109,15 +109,10 @@ def robot_callback(data):
 	robot_params.angular.y = data.angular.y
 	robot_params.angular.z = data.angular.z
 
+# mehtod for reading the boolean state of a topic
 def move_callback(data):
 	global ball_move
 	ball_move = data
-	
-def calc_diff(x, y):
-	difference = abs(x.xc - y.xc)
-	difference += abs(x.yc - y.yc)
-	difference += abs(x.zc - y.zc)
-	print(difference)
 
 if __name__ == '__main__':
 	# initialize the node
@@ -143,6 +138,7 @@ if __name__ == '__main__':
 	planComplete = False
 	framesCheck = True
 	
+	# initialize variables for checking recieved data
 	old_params = SphereParams()
 	old_difference = 0
 	count = 0
@@ -155,11 +151,20 @@ if __name__ == '__main__':
 				print("Frames available")
 				framesCheck = False
 			
+			# Data checking
+			# The absolute value of the coordinates are added together
+			# The new and older values are subtracted, and the absolute value is compared
+			# The greater than value was chosen from looking at outputs.
+			# .0002 was accurate in the simulation. That value would be exceeded roughly every 20 readings once
+			# A higher value was chosen to detect more erratic readings
 			difference = abs(ball_params.xc)
 			difference += abs(ball_params.yc)
 			difference += abs(ball_params.zc)
 			if not (abs(difference-old_difference) >= .0005):
-				count += 1
+				count += 1	# After 15 sufficient readings a flag is toggled
+			else:
+				print("Data recieved was too erratic. Counter reset. Re-examining...")
+				count = 0
 			old_difference = difference
 			old_params.xc = ball_params.xc
 			old_params.yc = ball_params.yc
@@ -175,9 +180,10 @@ if __name__ == '__main__':
 		# extract the quaternion and converto RPY
 		q_rot = trans.transform.rotation
 		roll, pitch, yaw, = euler_from_quaternion([q_rot.x, q_rot.y, q_rot.z, q_rot.w])		
-		# after data has been collected 24 times, the next collected data
+		# after data has been collected 15 times, the last collected data
 		# will be used for the plan
 		if count == 15:
+			print("Examining complete. sphere_params will cease publishing. Plan creation in process...")
 			stop_data = Bool()
 			stop_data.data = True
 			send_pub.publish(stop_data)
@@ -193,8 +199,8 @@ if __name__ == '__main__':
 			# Send the current robot parameters and ball coordiantes to the planner
 			plan = createPlan(robot_params, pt_in_base)
 			planComplete = True
-			print("Plan is created. Expect robot movement after using rqtgui")
-		# publish the plan
+			print("Plan created. Robot will began moving after changing boolean state from correct topic in rqt_gui")
+		# publish the plan when it is created and a boolean topic is set to true
 		if planComplete and ball_move.data:
 			plan_pub.publish(plan)
 		# wait for 0.1 seconds until the next loop and repeat
