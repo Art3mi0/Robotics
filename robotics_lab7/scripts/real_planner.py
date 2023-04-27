@@ -221,7 +221,7 @@ if __name__ == '__main__':
 		# extract the quaternion and converto RPY
 		q_rot = trans.transform.rotation
 		roll, pitch, yaw, = euler_from_quaternion([q_rot.x, q_rot.y, q_rot.z, q_rot.w])		
-		# after data has been collected 24 times, the next collected data
+		# after data has been collected 15 times, the last collected data
 		# will be used for the plan
 		if count == 15:
 			print("Examining complete. sphere_params will cease publishing. Plan creation in process...")
