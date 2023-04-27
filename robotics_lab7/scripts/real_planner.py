@@ -11,12 +11,19 @@ import tf2_geometry_msgs
 from ur5e_control.msg import Plan
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Bool
+from std_msgs.msg import UInt8
 from robot_vision_lectures.msg import SphereParams
 
 def createPlan(rStart, pt_in_base):
 	# define a plan variable
 	plan = Plan()
 	plan_point1 = Twist()
+	point_mode0 = UInt8()
+	point_mode1 = UInt8()
+	point_mode2 = UInt8()
+	point_mode0.data = 0
+	point_mode1.data = 1
+	point_mode2.data = 2
 	# define a point close to the initial position
 	plan_point1.linear.x = rStart.linear.x
 	plan_point1.linear.y = rStart.linear.y
@@ -26,6 +33,7 @@ def createPlan(rStart, pt_in_base):
 	plan_point1.angular.z = rStart.angular.z
 	# add this point to the plan
 	plan.points.append(plan_point1)
+	plan.modes.append(point_mode0)
 	
 	plan_point2 = Twist()
 	# Move the claw above the ball
@@ -37,6 +45,7 @@ def createPlan(rStart, pt_in_base):
 	plan_point2.angular.z = rStart.angular.z
 	# add this point to the plan
 	plan.points.append(plan_point2)
+	plan.modes.append(point_mode0)
 	
 	plan_point3 = Twist()
 	# Move the claw towards the radius of the ball
@@ -48,39 +57,68 @@ def createPlan(rStart, pt_in_base):
 	plan_point3.angular.z = rStart.angular.z
 	# add this point to the plan
 	plan.points.append(plan_point3)
+	plan.modes.append(point_mode0)
 	
 	plan_point4 = Twist()
-	# Move the claw above where the ball was
+	# Change mode to grip ball
 	plan_point4.linear.x = pt_in_base.point.x
 	plan_point4.linear.y = pt_in_base.point.y
-	plan_point4.linear.z = rStart.linear.z
+	plan_point4.linear.z = pt_in_base.point.z
 	plan_point4.angular.x = rStart.angular.x
 	plan_point4.angular.y = rStart.angular.y
 	plan_point4.angular.z = rStart.angular.z
 	# add this point to the plan
 	plan.points.append(plan_point4)
+	plan.modes.append(point_mode2)
 	
 	plan_point5 = Twist()
-	# Move the claw where the ball started
-	plan_point5.linear.x = rStart.linear.x
-	plan_point5.linear.y = rStart.linear.y
+	# Move the claw above where the ball was
+	plan_point5.linear.x = pt_in_base.point.x
+	plan_point5.linear.y = pt_in_base.point.y
 	plan_point5.linear.z = rStart.linear.z
 	plan_point5.angular.x = rStart.angular.x
 	plan_point5.angular.y = rStart.angular.y
 	plan_point5.angular.z = rStart.angular.z
 	# add this point to the plan
 	plan.points.append(plan_point5)
+	plan.modes.append(point_mode0)
 	
 	plan_point6 = Twist()
-	# Move the claw downwards to let go of ball
+	# Move the claw where the claw started
 	plan_point6.linear.x = rStart.linear.x
 	plan_point6.linear.y = rStart.linear.y
-	plan_point6.linear.z = pt_in_base.point.z
+	plan_point6.linear.z = rStart.linear.z
 	plan_point6.angular.x = rStart.angular.x
 	plan_point6.angular.y = rStart.angular.y
 	plan_point6.angular.z = rStart.angular.z
 	# add this point to the plan
 	plan.points.append(plan_point6)
+	plan.modes.append(point_mode0)
+	
+	plan_point7 = Twist()
+	# Move the claw downwards
+	plan_point7.linear.x = rStart.linear.x
+	plan_point7.linear.y = rStart.linear.y
+	plan_point7.linear.z = pt_in_base.point.z
+	plan_point7.angular.x = rStart.angular.x
+	plan_point7.angular.y = rStart.angular.y
+	plan_point7.angular.z = rStart.angular.z
+	# add this point to the plan
+	plan.points.append(plan_point7)
+	plan.modes.append(point_mode0)
+	
+	plan_point8 = Twist()
+	# Open the gripper
+	plan_point8.linear.x = rStart.linear.x
+	plan_point8.linear.y = rStart.linear.y
+	plan_point8.linear.z = pt_in_base.point.z
+	plan_point8.angular.x = rStart.angular.x
+	plan_point8.angular.y = rStart.angular.y
+	plan_point8.angular.z = rStart.angular.z
+	# add this point to the plan
+	plan.points.append(plan_point8)
+	plan.modes.append(point_mode0)
+	
 	print("The Plan:")
 	print(plan)
 	return plan

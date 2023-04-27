@@ -7,7 +7,7 @@ from std_msgs.msg import Bool
 
 # Initialize message
 sphere_params_msg = SphereParams()
-pause_resume = Bool()
+send_check = Bool()
 check = False
 
 # Initialize array
@@ -41,6 +41,10 @@ def param_callback(data):
 	sphere_params_msg.yc = data.yc
 	sphere_params_msg.zc = data.zc
 	sphere_params_msg.radius = data.radius
+	
+def send_callback(data):
+	global send_check
+	send_check = data
 
 # Method for applying filter to xyz coordiantes
 def coordinate_filter(coordinate, out):
@@ -62,7 +66,9 @@ if __name__ == '__main__':
 	# Intialize the node
 	rospy.init_node('sphere_fit', anonymous = True)
 	# define a subscriber to read ball detection output
-	rospy.Subscriber("/xyz_cropped_ball", XYZarray, array_callback) 
+	rospy.Subscriber("/xyz_cropped_ball", XYZarray, array_callback)
+	# define a subscriber to read boolean value before sending data
+	pause_pub = rospy.Subscriber('/data_send', Bool, send_callback) 
 	# define a publisher to publish estimated sphere parameters
 	param_pub = rospy.Publisher('/sphere_params', SphereParams, queue_size = 10)
 	loop_rate = rospy.Rate(10)
@@ -97,6 +103,7 @@ if __name__ == '__main__':
 			estimate.zc = zfil_out
 			estimate.radius = rfil_out
 			# Publishes to topic that will display in rviz
-			param_pub.publish(estimate)
+			if not send_check.data:
+				param_pub.publish(estimate)
 
 		loop_rate.sleep()
