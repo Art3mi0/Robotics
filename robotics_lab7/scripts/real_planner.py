@@ -117,7 +117,7 @@ def createPlan(rStart, pt_in_base):
 	plan_point8.angular.z = rStart.angular.z
 	# add this point to the plan
 	plan.points.append(plan_point8)
-	plan.modes.append(point_mode0)
+	plan.modes.append(point_mode1)
 	
 	print("The Plan:")
 	print(plan)
