@@ -5,7 +5,7 @@ from robot_vision_lectures.msg import SphereParams
 from robot_vision_lectures.msg import XYZarray
 from std_msgs.msg import Bool
 
-# Initialize message
+# Initialize messages and check
 sphere_params_msg = SphereParams()
 send_check = Bool()
 check = False
@@ -41,7 +41,8 @@ def param_callback(data):
 	sphere_params_msg.yc = data.yc
 	sphere_params_msg.zc = data.zc
 	sphere_params_msg.radius = data.radius
-	
+
+# Method for reading boolean data from a topic
 def send_callback(data):
 	global send_check
 	send_check = data
@@ -102,8 +103,8 @@ if __name__ == '__main__':
 			estimate.yc = yfil_out
 			estimate.zc = zfil_out
 			estimate.radius = rfil_out
-			# Publishes to topic that will display in rviz
-			if not send_check.data:
+			# Publishes to topic that will display in rviz if subscribed topic is in correct state
+			if not send_check.data:	# The default is false, so not is required
 				param_pub.publish(estimate)
 
 		loop_rate.sleep()
